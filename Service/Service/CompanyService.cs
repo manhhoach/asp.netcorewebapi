@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Contracts;
+using LoggerService;
+using Service.Contracts.IService;
 
 namespace Service.Service
 {
-    internal class CompanyService
+    public class CompanyService : ICompanyService
     {
+        private readonly IRepositoryManager _repositoryManager;
+        private readonly ILoggerManager _logger;
+        public CompanyService(IRepositoryManager repositoryManager, ILoggerManager logger)
+        {
+            _repositoryManager = repositoryManager;
+            _logger = logger;
+        }
     }
 }

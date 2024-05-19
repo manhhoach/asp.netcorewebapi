@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service.Contracts.IService
+﻿namespace Service.Contracts.IService
 {
-    internal interface ICompanyService
+    public interface ICompanyService
     {
     }
 }

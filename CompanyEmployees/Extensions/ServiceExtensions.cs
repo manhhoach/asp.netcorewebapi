@@ -30,6 +30,6 @@ namespace CompanyEmployees.Extensions
             services.AddScoped<IRepositoryManager, RepositoryManager>();
 
         public static void ConfigureServiceManager(this IServiceCollection services) =>
-services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddScoped<IServiceManager, ServiceManager>();
     }
 }
