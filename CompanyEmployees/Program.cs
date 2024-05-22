@@ -1,4 +1,5 @@
-using CompanyEmployees.Extensions;
+﻿using CompanyEmployees.Extensions;
+using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
 
@@ -20,8 +21,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureLoggerService();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
+
+var logger = app.Services.GetRequiredService<ILoggerManager>();
+app.ConfigureExceptionHandler(logger);
+
+
+
+
 
 if (app.Environment.IsDevelopment())
 {
