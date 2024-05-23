@@ -13,5 +13,10 @@ namespace Repository.Repository
         {
             return FindAll(trackChanges).ToList();
         }
+
+        public Company GetCompany(Guid companyId, bool trackChanges)
+        {
+            return FindByCondition(c => c.Id.Equals(companyId), trackChanges).SingleOrDefault();
+        }
     }
 }
