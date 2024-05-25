@@ -9,6 +9,12 @@ namespace Repository.Repository
         {
 
         }
+
+        public Employee GetEmployee(Guid companyId, Guid id, bool trackChanges)
+        {
+            return FindByCondition(x => x.CompanyId == companyId && x.Id == id, trackChanges).SingleOrDefault();
+        }
+
         public IEnumerable<Employee> GetEmployees(Guid companyId, bool trackChanges) =>
             FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
             .OrderBy(e => e.Name).ToList();
