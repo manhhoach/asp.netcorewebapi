@@ -18,8 +18,8 @@ namespace Service
             _employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(repositoryManager, logger, mapper));
         }
 
-        public ICompanyService CompanyService => _companyService.Value;
+        public ICompanyService Company => _companyService.Value;
 
-        public IEmployeeService EmployeeService => _employeeService.Value;
+        public IEmployeeService Employee => _employeeService.Value;
     }
 }

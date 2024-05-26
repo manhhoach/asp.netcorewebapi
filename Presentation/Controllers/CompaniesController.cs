@@ -17,14 +17,14 @@ namespace Presentation.Controllers
         [HttpGet]
         public IActionResult GetCompanies()
         {
-            var companies = _serviceManager.CompanyService.GetAllCompanies(false);
+            var companies = _serviceManager.Company.GetAllCompanies(false);
             return Ok(companies);
 
         }
         [HttpGet("{id:guid}", Name = "CompanyById")]
         public IActionResult GetCompany(Guid id)
         {
-            var company = _serviceManager.CompanyService.GetCompany(id, trackChanges: false);
+            var company = _serviceManager.Company.GetCompany(id, trackChanges: false);
             return Ok(company);
         }
 
@@ -33,11 +33,17 @@ namespace Presentation.Controllers
         {
             if (company is null)
             {
-                 return BadRequest("CompanyForCreationDto object is null");
+                return BadRequest("CompanyForCreationDto object is null");
             }
-            var createdCompany = _serviceManager.CompanyService.CreateCompany(company);
+            var createdCompany = _serviceManager.Company.CreateCompany(company);
             return CreatedAtRoute("CompanyById", new { id = createdCompany.Id }, createdCompany);
         }
 
+        [HttpGet("collection/({ids})", Name = "CompanyCollection")]
+        public IActionResult GetCompanyCollection(IEnumerable<Guid> ids)
+        {
+            var companyEntities = _serviceManager.Company.GetByIds(ids, false);
+            return Ok(companyEntities);
+        }
     }
 }
