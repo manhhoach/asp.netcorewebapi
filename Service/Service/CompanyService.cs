@@ -31,7 +31,22 @@ namespace Service.Service
 
         public (IEnumerable<CompanyDto> companies, string ids) CreateCompanyCollection(IEnumerable<CompanyForCreationDto> companyCollection)
         {
-            throw new NotImplementedException();
+            if (companyCollection is null)
+                throw new CompanyCollectionBadRequest();
+
+            var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
+            foreach (var company in companyEntities)
+            {
+                _repositoryManager.Company.CreateCompany(company);
+            }
+
+            _repositoryManager.Save();
+
+            var companyCollectionToReturn =
+           _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+            var ids = string.Join(",", companyCollectionToReturn.Select(c => c.Id));
+
+            return (companies: companyCollectionToReturn, ids: ids);
         }
 
         public IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges)
@@ -66,6 +81,15 @@ namespace Service.Service
             }
             var companyDto = _mapper.Map<CompanyDto>(company);
             return companyDto;
+        }
+
+        public void DeleteCompany(Guid companyId, bool trackChanges)
+        {
+            var company = _repositoryManager.Company.GetCompany(companyId, trackChanges);
+            if (company is null)
+                throw new CompanyNotFoundException(companyId);
+            _repositoryManager.Company.DeleteCompany(company);
+            _repositoryManager.Save();
         }
     }
 }

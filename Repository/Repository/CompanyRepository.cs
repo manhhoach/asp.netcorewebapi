@@ -28,5 +28,7 @@ namespace Repository.Repository
         {
             return FindByCondition(c => c.Id.Equals(companyId), trackChanges).SingleOrDefault();
         }
+        public void DeleteCompany(Company company) => Delete(company);
+
     }
 }
