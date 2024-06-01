@@ -32,6 +32,8 @@ namespace Presentation.Controllers
             {
                 return BadRequest("EmployeeForCreationDto object is null");
             }
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
             var createdEmployee = _service.Employee.CreateEmployeeForCompany(companyId, employee, trackChanges: false);
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId, id = createdEmployee.Id }, createdEmployee);
         }
