@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Presentation.Controllers
 {
@@ -13,9 +14,9 @@ namespace Presentation.Controllers
         public EmployeesController(IServiceManager service) => _service = service;
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId)
+        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId, [FromQuery] EmployeeParameters employeeParameters)
         {
-            var employees = await _service.Employee.GetEmployeesAsync(companyId, trackChanges: false);
+            var employees = await _service.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges: false);
             return Ok(employees);
         }
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
