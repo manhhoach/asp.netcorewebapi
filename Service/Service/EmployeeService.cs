@@ -28,20 +28,24 @@ namespace Service.Service
                 throw new CompanyNotFoundException(companyId);
         }
 
-        private async Task<Employee> GetEmployeeForCompanyAndCheckIfExist(Guid companyId,Guid id, bool trackChanges)
+        private async Task<Employee> GetEmployeeForCompanyAndCheckIfExist(Guid companyId, Guid id, bool trackChanges)
         {
             var employeeFromDb = await _repositoryManager.Employee.GetEmployeeAsync(companyId, id, trackChanges);
             if (employeeFromDb is null)
                 throw new EmployeeNotFoundException(id);
             return employeeFromDb;
-        }  
+        }
 
-        public async Task<IEnumerable<EmployeeDto>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
+        public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
         {
+            if (!employeeParameters.ValidAgeRange)
+                throw new MaxAgeRangeBadRequestException();
+
             await CheckIfCompanyExists(companyId, trackChanges);
-            var employeesFromDb = await _repositoryManager.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges);
-            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
-            return employeesDto;
+
+            var employeesWithMetaData = await _repositoryManager.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges);
+            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+            return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
         }
 
         public async Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)

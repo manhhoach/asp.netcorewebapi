@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using System.Text.Json;
 
 namespace Presentation.Controllers
 {
@@ -16,9 +17,11 @@ namespace Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId, [FromQuery] EmployeeParameters employeeParameters)
         {
-            var employees = await _service.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges: false);
-            return Ok(employees);
+            var pagedResult = await _service.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
+            return Ok(pagedResult.employees);
         }
+
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
         public async Task<IActionResult> GetEmployee(Guid companyId, Guid id)
         {
