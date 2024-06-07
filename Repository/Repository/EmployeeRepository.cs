@@ -24,26 +24,17 @@ namespace Repository.Repository
             Delete(employee);
         }
 
-        public Employee GetEmployee(Guid companyId, Guid id, bool trackChanges)
-        {
-            return FindByCondition(x => x.CompanyId == companyId && x.Id == id, trackChanges).SingleOrDefault();
-        }
-
         public async Task<Employee> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
         {
             return await FindByCondition(x => x.CompanyId == companyId && x.Id == id, trackChanges).SingleOrDefaultAsync();
         }
-
-        public IEnumerable<Employee> GetEmployees(Guid companyId, bool trackChanges) =>
-            FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
-            .OrderBy(e => e.Name).ToList();
 
         public async Task<PagedList<Employee>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
         {
             var employess = await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
                 .FilterEmployees(employeeParameters.MinAge, employeeParameters.MaxAge)
                 .Search(employeeParameters.SearchTerm)
-                .OrderBy(e => e.Name)
+                .Sort(employeeParameters.OrderBy)
                 .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
                 .Take(employeeParameters.PageSize)
                 .ToListAsync();
