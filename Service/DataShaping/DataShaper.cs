@@ -9,8 +9,7 @@ namespace Service.DataShaping
         public PropertyInfo[] Properties { get; set; }
         public DataShaper()
         {
-            Properties = typeof(T).GetProperties(BindingFlags.Public |
-            BindingFlags.Instance);
+            Properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         }
         public IEnumerable<ExpandoObject> ShapeData(IEnumerable<T> entities, string fieldsString)
         {
