@@ -6,5 +6,6 @@ namespace Service.Contracts
     {
         ICompanyService Company { get; }
         IEmployeeService Employee { get; }
+        IAuthenticationService Authentication { get; }
     }
 }
