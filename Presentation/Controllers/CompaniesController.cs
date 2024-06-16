@@ -23,6 +23,7 @@ namespace Presentation.Controllers
         // [ResponseCache(Duration = 60)]
         [Authorize]
         [HttpGet(Name = "GetCompanies")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _serviceManager.Company.GetAllCompaniesAsync(false);
