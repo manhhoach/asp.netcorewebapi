@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Entities.ConfigurationModels;
 using Entities.Exceptions;
 using Entities.Models;
 using LoggerService;
@@ -21,14 +22,17 @@ namespace Service.Service
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
         private User? _user;
-        private IConfiguration jwtSettings;
+        private readonly JwtConfiguration _jwtConfiguration;
+        private string secretKey;
         public AuthenticationService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
         {
             _logger = logger;
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
-            jwtSettings = _configuration.GetSection("JwtSettings");
+            _jwtConfiguration = new JwtConfiguration();
+            _configuration.Bind(_jwtConfiguration.Section, _jwtConfiguration);
+            secretKey = _configuration.GetSection("JwtSettings")["secretKey"];
         }
 
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration)
@@ -71,7 +75,7 @@ namespace Service.Service
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = Encoding.UTF8.GetBytes(jwtSettings["secretKey"]);
+            var key = Encoding.UTF8.GetBytes(secretKey);
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
@@ -95,10 +99,10 @@ namespace Service.Service
         {
             var tokenOptions = new JwtSecurityToken
             (
-                issuer: jwtSettings["validIssuer"],
-                audience: jwtSettings["validAudience"],
+                issuer: _jwtConfiguration.ValidIssuer,
+                audience: _jwtConfiguration.ValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expires"])),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
                 signingCredentials: signingCredentials
             );
             return tokenOptions;
@@ -119,13 +123,13 @@ namespace Service.Service
                 ValidateAudience = true,
                 ValidateIssuer = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["secretKey"])),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                 ValidateLifetime = true,
-                ValidIssuer = jwtSettings["validIssuer"],
-                ValidAudience = jwtSettings["validAudience"],
+                ValidIssuer = _jwtConfiguration.ValidIssuer,
+                ValidAudience = _jwtConfiguration.ValidAudience,
                 IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
                 {
-                    return new List<SecurityKey> { new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["secretKey"])) };
+                    return new List<SecurityKey> { new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)) };
                 }
             };
 
