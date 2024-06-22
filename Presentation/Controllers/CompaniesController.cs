@@ -12,6 +12,7 @@ namespace Presentation.Controllers
     [Route("api/companies")]
     [ApiController]
     // [ResponseCache(CacheProfileName = "120SecondsDuration")]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class CompaniesController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
@@ -20,6 +21,10 @@ namespace Presentation.Controllers
             _serviceManager = serviceManager;
         }
 
+        /// <summary> 
+        /// Gets the list of all companies 
+        /// </summary> 
+        /// <returns>The companies list</returns> 
         // [ResponseCache(Duration = 60)]
         [Authorize]
         [HttpGet(Name = "GetCompanies")]

@@ -3,8 +3,9 @@ using Service.Contracts;
 
 namespace Presentation.Controllers
 {
- //  [ApiVersion("2.0", Deprecated = true)]
+    //  [ApiVersion("2.0", Deprecated = true)]
     [Route("api/companies")]
+    [ApiExplorerSettings(GroupName = "v2")]
     [ApiController]
     public class CompaniesV2Controller : ControllerBase
     {

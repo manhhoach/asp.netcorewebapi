@@ -5,6 +5,7 @@ using Entities.Models;
 using LoggerService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contracts.IService;
 using Shared.DataTransferObjects;
@@ -20,19 +21,19 @@ namespace Service.Service
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly IOptions<JwtConfiguration> _configuration;
         private User? _user;
         private readonly JwtConfiguration _jwtConfiguration;
         private string secretKey;
-        public AuthenticationService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
+
+        public AuthenticationService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IOptions<JwtConfiguration> configuration, IConfiguration config)
         {
             _logger = logger;
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
-            _jwtConfiguration = new JwtConfiguration();
-            _configuration.Bind(_jwtConfiguration.Section, _jwtConfiguration);
-            secretKey = _configuration.GetSection("JwtSettings")["secretKey"];
+            _jwtConfiguration = _configuration.Value;
+            secretKey = config.GetSection("JwtSettings")["secretKey"];
         }
 
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration)
