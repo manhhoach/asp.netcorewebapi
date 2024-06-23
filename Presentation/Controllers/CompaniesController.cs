@@ -13,7 +13,7 @@ namespace Presentation.Controllers
     [ApiController]
     // [ResponseCache(CacheProfileName = "120SecondsDuration")]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class CompaniesController : ControllerBase
+    public class CompaniesController : ApiControllerBase
     {
         private readonly IServiceManager _serviceManager;
         public CompaniesController(IServiceManager serviceManager)
@@ -88,6 +88,28 @@ namespace Presentation.Controllers
         {
             Response.Headers.Add("Allow", "GET, OPTIONS, POST");
             return Ok();
+        }
+
+
+        [HttpGet(Name = "GetCompaniesNotAsync")]
+        public IActionResult GetCompaniesNotAsync()
+        {
+            var baseResult = _serviceManager.Company.GetAllCompanies(trackChanges: false);
+
+            var companies = baseResult.GetResult<IEnumerable<CompanyDto>>();
+
+            return Ok(companies);
+        }
+
+        [HttpGet("{id:guid}", Name = "GetCompanyNotAsync")]
+        public IActionResult GetCompanyNotAsync(Guid id)
+        {
+            var baseResult = _serviceManager.Company.GetCompany(id, trackChanges: false);
+            if (!baseResult.Success)
+                return ProcessError(baseResult);
+
+            var company = baseResult.GetResult<CompanyDto>();
+            return Ok(company);
         }
     }
 }
