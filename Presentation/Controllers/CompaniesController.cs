@@ -1,4 +1,5 @@
-﻿using Marvin.Cache.Headers;
+﻿using Entities.Extensions;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
@@ -91,7 +92,8 @@ namespace Presentation.Controllers
         }
 
 
-        [HttpGet(Name = "GetCompaniesNotAsync")]
+        [HttpGet]
+        [Route("GetCompaniesNotAsync")]
         public IActionResult GetCompaniesNotAsync()
         {
             var baseResult = _serviceManager.Company.GetAllCompanies(trackChanges: false);
@@ -101,7 +103,8 @@ namespace Presentation.Controllers
             return Ok(companies);
         }
 
-        [HttpGet("{id:guid}", Name = "GetCompanyNotAsync")]
+        [HttpGet]
+        [Route("GetCompanyNotAsync/{id:Guid}")]
         public IActionResult GetCompanyNotAsync(Guid id)
         {
             var baseResult = _serviceManager.Company.GetCompany(id, trackChanges: false);
